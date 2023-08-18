@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useRouteError } from 'react-router-dom'
 
 // routing location inside the pages folder
 import Home from './pages/Home'
@@ -12,6 +12,8 @@ import SingleProduct from './pages/SingleProduct'
 import { useState } from 'react'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import ProtectedRoute from './pages/ProtectedRoute'
+import SharedProductLayout from './pages/SharedProductLayout'
 
 function App() {
   // useNavigate functions
@@ -22,10 +24,23 @@ function App() {
         <Route path="/" element={<SharedLayout />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
-          <Route path="products" element={<Products />} />
-          <Route path="products/:productID" element={<SingleProduct />} />
+
+          {/* Shared Product Layout - Refactored code */}
+          <Route path="products" element={<SharedProductLayout />}>
+            <Route index element={<Products />} />
+            <Route path=":productID" element={<SingleProduct />} />
+          </Route>
           <Route path="login" element={<Login setUser={setUser} />} />
-          <Route path="dashboard" element={<Dashboard user={user} />} />
+
+          {/* Protected Route (for not letting the user to go to dashboard without logging in) - Refactored code */}
+          <Route
+            path="dashboard"
+            element={
+              <ProtectedRoute user={user}>
+                <Dashboard user={user} />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<ErrorMessage />} />
         </Route>
       </Routes>
